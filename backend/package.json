@@ -2,7 +2,7 @@
   "name": "@finni-health/backend",
   "version": "1.0.0",
   "description": "The backend implementation for Finni Health's take-home assignment, using Node.js, Express, and MySQL",
-  "main": "index.js",
+  "main": "index.ts",
   "scripts": {
     "start": "ts-node index.ts",
     "start:debug": "DEBUG=express:* ts-node index.ts"
