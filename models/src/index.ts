@@ -1,5 +1,3 @@
-export const PROVIDER_ID = '78b007dc-b10a-4a13-8047-a920561000f4';
-
 export enum PatientStatus {
   Active = 'ACTIVE',
   Churned = 'CHURNED',
