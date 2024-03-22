@@ -22,6 +22,7 @@ interface User {
 export type Provider = User;
 
 export interface Patient extends User {
+  age?: number;
   dob: string;
   patientStatus?: PatientStatus;
   address?: Address[];
