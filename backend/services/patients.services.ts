@@ -1,12 +1,19 @@
 import { QueryError, PoolConnection } from 'mysql2';
 import { v4 as uuidv4 } from 'uuid';
-import { Address, Patient, PatientStatus } from '@finni-health/models';
+import { Address, Patient } from '@finni-health/models';
 
 import { PROVIDER_ID } from '../constants';
 import { connection } from '../config/db';
 
+enum PatientStatus {
+  Active = 'ACTIVE',
+  Churned = 'CHURNED',
+  Inactive = 'INACTIVE',
+  Inquiry = 'INQUIRY',
+  Onboarding = 'ONBOARDING',
+}
+
 interface PatientDataResults {
-  patientId: string;
   patient: Patient;
   address: Address[];
 }
@@ -83,6 +90,7 @@ const queryInsertPatientData = ({
       conn.query(
         `
         SELECT
+          id AS patientId,
           first_name AS firstName,
           middle_name AS middleName,
           last_name AS lastName,
@@ -107,7 +115,6 @@ const queryInsertPatientData = ({
 
           if (err) return reject(err);
           return resolve({
-            patientId,
             patient: patient[0],
             address: address,
           });
@@ -149,7 +156,6 @@ const querySelectPatientData = (
 
           if (err) return reject(err);
           return resolve({
-            patientId,
             patient: patient[0],
             address,
           });
@@ -183,14 +189,8 @@ const queryUpdatePatientData = (
 
       if (address && address.length > 0) {
         for (let i = 0; i < address.length; i++) {
-          const {
-            id: addressId,
-            address1,
-            address2,
-            city,
-            state,
-            zip,
-          } = address[i];
+          const { addressId, address1, address2, city, state, zip } =
+            address[i];
 
           conn.query(
             `
@@ -215,6 +215,7 @@ const queryUpdatePatientData = (
       conn.query(
         `
         SELECT
+          id AS patientId,
           first_name AS firstName,
           middle_name AS middleName,
           last_name AS lastName,
@@ -239,7 +240,6 @@ const queryUpdatePatientData = (
 
           if (err) return reject(err);
           return resolve({
-            patientId,
             patient: patient[0],
             address,
           });
@@ -258,16 +258,16 @@ const querySelectPatientsByProvider = (): Promise<Patient[]> => {
           patients.id AS patientId,
           first_name AS firstName,
           last_name AS lastName,
-          patient_status AS status,
+          patient_status AS patientStatus,
           dob,
           city as primaryCity,
           state as primaryState
         FROM patients
-        INNER JOIN providers ON patients.providers_id = providers.id
-        INNER JOIN users ON patients.user_id = users.id
+        INNER JOIN providers ON providers.id = patients.provider_id
+        INNER JOIN users ON users.id = patients.user_id
         INNER JOIN address ON address.patient_id = patients.id
-        WHERE providers.id="${PROVIDER_ID}" AND address.is_primary=1
-        LIMIT 50 OFFSET 0;
+        WHERE patients.provider_id="${PROVIDER_ID}" AND address.is_default=1
+        LIMIT 50 OFFSET 0
         `,
         (err: QueryError, result: Patient[]) => {
           conn.release();

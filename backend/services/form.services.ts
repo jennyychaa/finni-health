@@ -34,6 +34,7 @@ const queryInsertCustomPatientFields = (
             conn.release();
 
             if (err) return reject(err);
+            return resolve([]);
           }
         );
       }
@@ -44,8 +45,8 @@ const queryInsertCustomPatientFields = (
           label,
           field_type AS fieldType
         FROM custom_patient_fields
-        WHERE providers.id="${PROVIDER_ID}" AND active=1;
-      `,
+        WHERE provider_id="${PROVIDER_ID}" AND is_active=1;
+        `,
         (err: QueryError, result: CustomPatientField[]) => {
           conn.release();
 
