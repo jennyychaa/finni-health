@@ -11,8 +11,10 @@
     ]
   },
   "scripts": {
-    "start": "npm run start -w backend; npm run start -w frontend",
     "start:frontend": "npm run start -w frontend",
     "start:backend": "npm run start -w backend"
+  },
+  "devDependencies": {
+    "typescript": "^5.4.3"
   }
 }

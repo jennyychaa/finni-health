@@ -1,48 +1,36 @@
-export enum PatientStatus {
-  Active = 'ACTIVE',
-  Churned = 'CHURNED',
-  Inactive = 'INACTIVE',
-  Inquiry = 'INQUIRY',
-  Onboarding = 'ONBOARDING',
-}
-
-export enum FieldType {
-  Number = 'number',
-  Text = 'text',
-  TextArea = 'textarea',
-}
-
 interface User {
-  id: string;
-  firstName: string;
+  firstName?: string;
   middleName?: string;
-  lastName: string;
+  lastName?: string;
 }
 
-export type Provider = User;
+export interface Provider extends User {
+  providerId?: string;
+}
 
 export interface Patient extends User {
-  dob: string;
-  patientStatus?: PatientStatus;
+  patientId?: string;
+  patientStatus?: any;
+  dob?: string;
+  primaryCity?: string;
+  primaryState?: string;
   address?: Address[];
-  primaryCity: string;
-  primaryState: string;
   customData?: CustomPatientField;
 }
 
 export interface Address {
-  id: string;
+  addressId?: string;
   isDefault?: 0 | 1;
   address1?: string;
   address2?: string;
-  city: string;
-  state: string;
+  city?: string;
+  state?: string;
   zip?: string;
 }
 
 export interface CustomPatientField {
-  fieldId: string;
-  label: string;
-  fieldType: FieldType;
+  fieldId?: string;
+  label?: string;
+  fieldType?: any;
   value?: string | number;
 }

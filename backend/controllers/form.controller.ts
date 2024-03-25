@@ -1,14 +1,11 @@
 import { Request, Response } from 'express';
-import { QueryError, PoolConnection } from 'mysql2';
-import { CustomPatientField } from '@finni-health/models';
 
-import { connection } from '../config/db';
 import formServices from '../services/form.services';
 
 const addCustomPatientFields = (req: Request, res: Response) => {
   const customPatientFields = req.body;
 
-  if (customPatientFields && customPatientFields > 0) {
+  if (customPatientFields && customPatientFields.length > 0) {
     formServices
       .queryInsertCustomPatientFields(customPatientFields)
       .then((customPatientFields) => {
@@ -43,23 +40,21 @@ const getCustomPatientFields = (_: Request, res: Response) => {
 const updateCustomPatientFields = (req: Request, res: Response) => {
   const customPatientFields = req.body;
 
-  connection.getConnection((_, conn: PoolConnection) => {
-    if (customPatientFields && customPatientFields > 0) {
-      formServices
-        .queryUpdateCustomPatientFields(customPatientFields)
-        .then((customPatientFields) => {
-          res.status(200).send(customPatientFields);
-        })
-        .catch((err) => {
-          res.status(500).send({
-            message: 'There was an error updating custom patient fields...',
-            err,
-          });
+  if (customPatientFields && customPatientFields > 0) {
+    formServices
+      .queryUpdateCustomPatientFields(customPatientFields)
+      .then((customPatientFields) => {
+        res.status(200).send(customPatientFields);
+      })
+      .catch((err) => {
+        res.status(500).send({
+          message: 'There was an error updating custom patient fields...',
+          err,
         });
-    } else {
-      res.status(400).send('Invalid data was sent. Please check your data.');
-    }
-  });
+      });
+  } else {
+    res.status(400).send('Invalid data was sent. Please check your data.');
+  }
 };
 
 const getCustomPatientData = (req: Request, res: Response) => {
