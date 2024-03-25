@@ -1,11 +1,11 @@
 import _ from 'lodash';
 import { ChangeEvent, useState } from 'react';
-import { Patient } from '@finni-health/models';
 import { MagnifyingGlassIcon } from '@heroicons/react/20/solid';
+import { Patient } from '@finni-health/models';
 
+import { getPatientAge } from '../utils/patient';
 import { PatientStatus } from '../models';
 import PatientDataTable from './PatientDataTable';
-import { getPatientAge } from '../utils/patient';
 
 interface AgeFilter {
   min: number | string;
@@ -107,7 +107,9 @@ const PatientData = ({ patients }: { patients: Patient[] }) => {
     if (status === '') setStatusFilter('');
     else setStatusFilter(status as PatientStatus);
 
-    const results = getPatientsByCriteria({ status: status as PatientStatus });
+    const results = getPatientsByCriteria({
+      status: status as PatientStatus,
+    });
     setFilteredPatients(results ?? []);
   };
 
@@ -172,19 +174,11 @@ const PatientData = ({ patients }: { patients: Patient[] }) => {
             name='patientStatus'
             onChange={filterByStatus}>
             <option value=''>All Status</option>
-            <option value={PatientStatus.Inquiry}>
-              {PatientStatus.Inquiry}
-            </option>
-            <option value={PatientStatus.Onboarding}>
-              {PatientStatus.Onboarding}
-            </option>
-            <option value={PatientStatus.Churned}>
-              {PatientStatus.Churned}
-            </option>
-            <option value={PatientStatus.Active}>{PatientStatus.Active}</option>
-            <option value={PatientStatus.Inactive}>
-              {PatientStatus.Inactive}
-            </option>
+            <option value={PatientStatus.Inquiry}>Inquiry</option>
+            <option value={PatientStatus.Onboarding}>Onboarding</option>
+            <option value={PatientStatus.Churned}>Churned</option>
+            <option value={PatientStatus.Active}>Active</option>
+            <option value={PatientStatus.Inactive}>Inactive</option>
           </select>
         </div>
         <div className='sm:col-span-1'>
